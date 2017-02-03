@@ -75,6 +75,6 @@ class Inputs(object):
 
             if not form.validate():
                 success = False
-                self.errors += chain(*form.errors.values())
+                self.errors = form.errors
 
         return success
