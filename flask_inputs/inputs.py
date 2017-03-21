@@ -1,6 +1,5 @@
 
 import collections
-from itertools import chain
 from future.utils import iteritems
 
 from werkzeug.datastructures import MultiDict
