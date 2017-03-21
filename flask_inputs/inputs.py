@@ -11,18 +11,18 @@ from wtforms.fields import Field
 class Inputs(object):
     #: flask.Request attributes available for validation
     valid_attrs = ['args', 'form', 'values', 'cookies',
-                   'headers', 'json', 'rule']
+                   'headers', 'json', 'rule', 'raw']
 
-    def __init__(self, request):
+    def __init__(self, inputs):
         """Base class for input validation. Subclass to add validators.
 
-        :param request: flask.Request object to validate.
+        :param inputs: flask.Request object or dict to validate.
         """
 
         #: List of errors from all validators.
         self.errors = []
 
-        self._request = request
+        self._inputs = inputs
         self._forms = dict()
 
         for name in dir(self):
@@ -48,10 +48,12 @@ class Inputs(object):
         :returns: werkzeug.datastructures.MultiDict
         """
         if attribute in self.valid_attrs:
-            if attribute == 'rule':
-                ret = self._request.view_args
+            if attribute == 'raw':
+                ret = self._inputs
+            elif attribute == 'rule':
+                ret = self._inputs.view_args
             else:
-                ret = getattr(self._request, attribute)
+                ret = getattr(self._inputs, attribute)
 
             if coerse:
                 return MultiDict(ret)
@@ -59,7 +61,7 @@ class Inputs(object):
                 return MultiDict(dict(_input=ret))
 
     def validate(self):
-        """Validate incoming request data. Returns True if all data is valid.
+        """Validate incoming inputs data. Returns True if all data is valid.
         Adds each of the validator's error messages to Inputs.errors if not valid.
 
         :returns: Boolean
