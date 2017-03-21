@@ -17,7 +17,14 @@ class RawInputs(Inputs):
 
 class RawTest(unittest.TestCase):
     def test_valid(self):
-        test_input = {'name': 'Valtteri', 'email': 'valtteri@test.com'}
-        inputs = RawInputs(test_input)
+        valid_input = {'name': 'Valtteri', 'email': 'valtteri@test.com'}
+        inputs = RawInputs(valid_input)
 
         self.assertTrue(inputs.validate())
+
+    def test_invalid(self):
+        invalid_input = {'email': 'valtteri@test.com'}
+        inputs = RawInputs(invalid_input)
+
+        self.assertFalse(inputs.validate())
+        self.assertIn('Name is required.', inputs.errors['name'])
