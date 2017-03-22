@@ -34,3 +34,26 @@ class InputsValidatorTest(unittest.TestCase):
         inputs = UserInputs(valid_input)
 
         self.assertTrue(inputs.validate())
+
+    def test_invalid_child(self):
+        invalid_input = {'name': {'last_name': 'Virtanen'}, 'address': 'My street 2'}
+        inputs = UserInputs(invalid_input)
+
+        self.assertFalse(inputs.validate())
+        self.assertIn('First name is required.', inputs.errors['name'][0]['first_name'])
+
+    def test_invalid_parent(self):
+        invalid_input = {'name': {'first_name': 'Valtteri', 'last_name': 'Virtanen'}}
+        inputs = UserInputs(invalid_input)
+
+        self.assertFalse(inputs.validate())
+        self.assertIn('Address is required.', inputs.errors['address'])
+
+    def test_both_invalid(self):
+        invalid_input = {}
+        inputs = UserInputs(invalid_input)
+
+        self.assertFalse(inputs.validate())
+        self.assertIn('Address is required.', inputs.errors['address'])
+        self.assertIn('First name is required.', inputs.errors['name'][0]['first_name'])
+        self.assertIn('Last name is required.', inputs.errors['name'][0]['last_name'])
