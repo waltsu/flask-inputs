@@ -23,3 +23,17 @@ class JsonSchema(object):
                 raise ValidationError(self.message)
 
             raise ValidationError(e.message)
+
+
+class InputsValidator(object):
+    def __init__(self, validator_class):
+        """Takes Inputs-instance that'll validate the given field.
+
+        This is useful when you want to validate e.g. nested objects with different Inputs-instances
+        """
+        self.validator_class = validator_class
+
+    def __call__(self, form, field):
+        validator = self.validator_class(field.data)
+        if not validator.validate():
+            raise ValidationError(validator.errors)
